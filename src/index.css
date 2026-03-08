@@ -1,22 +1,18 @@
 @import "tailwindcss";
-
-/* =========================
-   DEFAULT DARK (Luxury Night Travel)
-   ========================= */
+html {
+  scroll-behavior: smooth;
+}
 @theme {
-  /* backgrounds */
   --color-travel-bg: #020617; /* deep night sky */
-  --color-travel-surface: #0f172a; /* navbar / sections */
-  --color-travel-card: #111827; /* cards */
+  --color-travel-surface: #0f172a;
+  --color-travel-card: #111827;
 
-  /* text */
-  --color-travel-text: #f8fafc; /* main text */
-  --color-travel-muted: #94a3b8; /* muted text */
+  --color-travel-text: #f8fafc;
+  --color-travel-muted: #94a3b8;
 
   /* brand & actions */
   --color-travel-primary: #38bdf8; /* sky blue (buttons, links) */
 
-  /* ⭐ luxury gold (LOGO + ACTIVE NAV) */
   --color-travel-accent: #d4af37; /* rich gold */
   --color-travel-accent-soft: #f5d77a; /* highlight / glow */
   --color-travel-accent-dark: #8c6a1f; /* shadow / depth */
@@ -25,12 +21,8 @@
   --color-travel-nature: #22c55e; /* green */
 }
 
-/* =========================
-   LIGHT MODE (Day Travel)
-   ========================= */
 html.light {
-  /* backgrounds */
-  --color-travel-bg: #f8fafc; /* soft white */
+  --color-travel-bg: #f8fafc;
   --color-travel-surface: #ffffff;
   --color-travel-card: #ffffff;
 
@@ -48,4 +40,20 @@ html.light {
 
   /* nature */
   --color-travel-nature: #16a34a;
+}
+
+swiper {
+  width: 100%;
+  height: 100%;
+}
+/* Chrome, Safari, Edge */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
 }
