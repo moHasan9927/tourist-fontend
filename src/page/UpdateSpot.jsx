@@ -1,66 +1,70 @@
-import React, { useContext } from "react";
-import AuthContext from "../context/AuthContext";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
-const AddSpot = () => {
-  const { user } = useContext(AuthContext);
+const UpdateSpot = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  const handleSubmit = e => {
+  const [spot, setSpot] = useState(null);
+
+  useEffect(() => {
+    if (!id) return;
+
+    fetch(`http://localhost:5000/tourist-spots/${id}`)
+      .then(res => res.json())
+      .then(data => setSpot(data));
+  }, [id]);
+
+  const handleUpdate = e => {
     e.preventDefault();
 
     const form = e.target;
 
-    const tourists_spot_name = form.name.value;
-    const country_Name = form.country.value;
-    const location = form.location.value;
-    const image = form.imgURL.value;
-    const short_description = form.description.value;
-    const average_cost = parseInt(form.cost.value);
-    const seasonality = form.season.value;
-    const travel_time = form.time.value;
-    const totalVisitorsPerYear = parseInt(form.visitors.value);
-
-    const addedSpot = {
-      tourists_spot_name,
-      country_Name,
-      location,
-      image,
-      short_description,
-      average_cost,
-      seasonality,
-      travel_time,
-      totalVisitorsPerYear,
-      userEmail: user?.email,
-      userName: user?.displayName,
+    const updatedSpot = {
+      tourists_spot_name: form.name.value,
+      country_Name: form.country.value,
+      location: form.location.value,
+      image: form.imgURL.value,
+      short_description: form.description.value,
+      average_cost: parseInt(form.cost.value),
+      seasonality: form.season.value,
+      travel_time: form.time.value,
+      totalVisitorsPerYear: parseInt(form.visitors.value),
     };
 
-    // send to backend
-    fetch("http://localhost:5000/tourist-spots", {
-      method: "POST",
+    fetch(`http://localhost:5000/tourist-spots/${id}`, {
+      method: "PUT",
       headers: {
         "content-type": "application/json",
       },
-      body: JSON.stringify(addedSpot),
+      body: JSON.stringify(updatedSpot),
     })
       .then(res => res.json())
       .then(data => {
-        console.log(data);
-
-        if (data.insertedId) {
-          alert("Tourist Spot Added Successfully!");
-          form.reset();
+        if (data.modifiedCount > -1) {
+          alert("Tourist spot updated successfully");
+          navigate(-1); // go back to previous page
         }
       });
   };
+
+  if (!spot) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <p className="text-travel-muted text-lg">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex justify-center items-center px-4">
       <div className="w-full max-w-3xl bg-travel-surface/40 backdrop-blur-2xl p-6 md:p-8 rounded-2xl border border-travel-surface/50 shadow-xl">
         <h2 className="text-2xl md:text-3xl font-bold text-travel-accent mb-6 text-center">
-          Add Tourist Spot
+          Update Tourist Spot
         </h2>
 
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleUpdate}
           className="grid grid-cols-1 md:grid-cols-2 gap-4"
         >
           {/* Tourist Spot Name */}
@@ -70,21 +74,21 @@ const AddSpot = () => {
             </label>
             <input
               name="name"
+              defaultValue={spot.tourists_spot_name}
               required
               type="text"
-              placeholder="Spot Name"
               className="w-full px-4 py-2 rounded-lg bg-transparent border border-travel-surface focus:outline-none focus:border-travel-accent"
             />
           </div>
 
-          {/* Country Name */}
+          {/* Country */}
           <div>
-            <label className="block mb-1 text-travel-muted">Country Name</label>
+            <label className="block mb-1 text-travel-muted">Country</label>
             <input
               name="country"
+              defaultValue={spot.country_Name}
               required
               type="text"
-              placeholder="Country"
               className="w-full px-4 py-2 rounded-lg bg-transparent border border-travel-surface focus:outline-none focus:border-travel-accent"
             />
           </div>
@@ -94,9 +98,9 @@ const AddSpot = () => {
             <label className="block mb-1 text-travel-muted">Location</label>
             <input
               name="location"
+              defaultValue={spot.location}
               required
               type="text"
-              placeholder="City / Region"
               className="w-full px-4 py-2 rounded-lg bg-transparent border border-travel-surface focus:outline-none focus:border-travel-accent"
             />
           </div>
@@ -106,21 +110,21 @@ const AddSpot = () => {
             <label className="block mb-1 text-travel-muted">Average Cost</label>
             <input
               name="cost"
+              defaultValue={spot.average_cost}
               required
               type="number"
-              placeholder="Cost in USD"
               className="w-full px-4 py-2 rounded-lg bg-transparent border border-travel-surface focus:outline-none focus:border-travel-accent"
             />
           </div>
 
-          {/* Seasonality */}
+          {/* Season */}
           <div>
             <label className="block mb-1 text-travel-muted">Best Season</label>
             <input
               name="season"
+              defaultValue={spot.seasonality}
               required
               type="text"
-              placeholder="Summer / Winter / All Season"
               className="w-full px-4 py-2 rounded-lg bg-transparent border border-travel-surface focus:outline-none focus:border-travel-accent"
             />
           </div>
@@ -130,23 +134,23 @@ const AddSpot = () => {
             <label className="block mb-1 text-travel-muted">Travel Time</label>
             <input
               name="time"
+              defaultValue={spot.travel_time}
               required
               type="text"
-              placeholder="Example: 5 hours"
               className="w-full px-4 py-2 rounded-lg bg-transparent border border-travel-surface focus:outline-none focus:border-travel-accent"
             />
           </div>
 
-          {/* Total Visitors */}
+          {/* Visitors */}
           <div>
             <label className="block mb-1 text-travel-muted">
-              Total Visitors Per Year
+              Visitors Per Year
             </label>
             <input
               name="visitors"
+              defaultValue={spot.totalVisitorsPerYear}
               required
               type="number"
-              placeholder="Visitors per year"
               className="w-full px-4 py-2 rounded-lg bg-transparent border border-travel-surface focus:outline-none focus:border-travel-accent"
             />
           </div>
@@ -156,32 +160,30 @@ const AddSpot = () => {
             <label className="block mb-1 text-travel-muted">Image URL</label>
             <input
               name="imgURL"
+              defaultValue={spot.image}
               required
               type="text"
-              placeholder="Photo URL"
               className="w-full px-4 py-2 rounded-lg bg-transparent border border-travel-surface focus:outline-none focus:border-travel-accent"
             />
           </div>
 
           {/* Description */}
           <div className="md:col-span-2">
-            <label className="block mb-1 text-travel-muted">
-              Short Description
-            </label>
+            <label className="block mb-1 text-travel-muted">Description</label>
             <textarea
               name="description"
               rows="4"
-              placeholder="Write something about this tourist spot..."
+              defaultValue={spot.short_description}
               className="w-full px-4 py-2 rounded-lg bg-transparent border border-travel-surface focus:outline-none focus:border-travel-accent"
             ></textarea>
           </div>
 
-          {/* Submit */}
+          {/* Submit Button */}
           <button
             type="submit"
             className="md:col-span-2 w-full mt-2 bg-travel-accent text-travel-text py-2 rounded-lg font-semibold hover:scale-105 active:scale-100 transition-transform duration-200 cursor-pointer"
           >
-            Add Tourist Spot
+            Update Tourist Spot
           </button>
         </form>
       </div>
@@ -189,4 +191,4 @@ const AddSpot = () => {
   );
 };
 
-export default AddSpot;
+export default UpdateSpot;

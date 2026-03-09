@@ -15,6 +15,8 @@ import ThemeContextProvider from "./context/ThemeContextProvider.jsx";
 import AuthContextProvider from "./context/AuthContextProvider.jsx";
 import Profile from "./page/Profile.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
+import SpotDetails from "./page/SpotDetails.jsx";
+import UpdateSpot from "./page/UpdateSpot.jsx";
 
 const router = createBrowserRouter([
   {
@@ -61,6 +63,14 @@ const router = createBrowserRouter([
             <Profile />
           </PrivateRoute>
         ),
+      },
+      {
+        path: "/spot-details/:id",
+        element: <SpotDetails />,
+      },
+      {
+        path: "/update-spot/:id",
+        element: <UpdateSpot />,
       },
     ],
   },
