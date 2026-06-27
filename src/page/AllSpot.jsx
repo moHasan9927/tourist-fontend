@@ -8,6 +8,7 @@ const AllSpot = () => {
   const [spots, setSpots] = useState([]);
 
   useEffect(() => {
+    console.log(import.meta.env.VITE_API_URL);
     fetch(`${API_URL}/tourist-spots`)
       .then(res => res.json())
       .then(data => setSpots(data));
