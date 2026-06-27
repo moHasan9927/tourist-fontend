@@ -1,7 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import AuthContext from "../context/AuthContext";
-
+import { FaLocationDot } from "react-icons/fa6";
+import { MdOutlineAttachMoney } from "react-icons/md";
+import { FaClock, FaCloud } from "react-icons/fa";
+import { IoPeopleSharp } from "react-icons/io5";
 const SpotDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -12,28 +16,40 @@ const SpotDetails = () => {
   useEffect(() => {
     if (!id) return;
 
-    fetch(`http://localhost:5000/tourist-spots/${id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/tourist-spots/${id}`)
       .then(res => res.json())
       .then(data => setSpot(data));
   }, [id]);
 
   const handleDelete = () => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this tourist spot?",
-    );
-
-    if (!confirmDelete) return;
-
-    fetch(`http://localhost:5000/tourist-spots/${id}`, {
-      method: "DELETE",
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.deletedCount > 0) {
-          alert("Spot deleted successfully");
-          navigate("/my_list");
-        }
-      });
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to recover this tourist spot!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then(result => {
+      if (result.isConfirmed) {
+        fetch(`${import.meta.env.VITE_API_URL}/tourist-spots/${id}`, {
+          method: "DELETE",
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.deletedCount > 0) {
+              Swal.fire({
+                title: "Deleted!",
+                text: "Tourist Spot deleted successfully.",
+                icon: "success",
+                confirmButtonText: "OK",
+              }).then(() => {
+                navigate("/my_list");
+              });
+            }
+          });
+      }
+    });
   };
 
   if (!spot) {
@@ -62,17 +78,32 @@ const SpotDetails = () => {
 
           {/* Details */}
           <div className="grid md:grid-cols-2 gap-3 text-travel-muted">
-            <p>
-              📍 {spot.location}, {spot.country_Name}
+            <p className="flex items-center gap-2">
+              <FaLocationDot />{" "}
+              <p>
+                {spot.location}, {spot.country_Name}
+              </p>
             </p>
 
-            <p>💰 Average Cost: ${spot.average_cost}</p>
+            <p className="flex items-center gap-2">
+              <MdOutlineAttachMoney />
+              <p> Average Cost: ${spot.average_cost}</p>
+            </p>
 
-            <p>🌤 Best Season: {spot.seasonality}</p>
+            <p className="flex items-center gap-2">
+              <FaCloud />
+              <p>Best Season: {spot.seasonality}</p>
+            </p>
 
-            <p>⏱ Travel Time: {spot.travel_time}</p>
+            <p className="flex items-center gap-2">
+              <FaClock />
+              <p>Travel Time: {spot.travel_time}</p>
+            </p>
 
-            <p>👥 Visitors per year: {spot.totalVisitorsPerYear}</p>
+            <p className="flex items-center gap-2">
+              <IoPeopleSharp />{" "}
+              <p>Visitors per year: {spot.totalVisitorsPerYear}</p>
+            </p>
           </div>
 
           {/* Description */}

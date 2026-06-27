@@ -1,7 +1,9 @@
 import React, { useContext } from "react";
+import Swal from "sweetalert2";
 import AuthContext from "../context/AuthContext";
 
 const AddSpot = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user } = useContext(AuthContext);
 
   const handleSubmit = e => {
@@ -33,8 +35,7 @@ const AddSpot = () => {
       userName: user?.displayName,
     };
 
-    // send to backend
-    fetch("http://localhost:5000/tourist-spots", {
+    fetch(`${import.meta.env.VITE_API_URL}/tourist-spots`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -46,7 +47,13 @@ const AddSpot = () => {
         console.log(data);
 
         if (data.insertedId) {
-          alert("Tourist Spot Added Successfully!");
+          Swal.fire({
+            title: "Success!",
+            text: "Tourist Spot Added Successfully!",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+
           form.reset();
         }
       });
@@ -151,7 +158,6 @@ const AddSpot = () => {
             />
           </div>
 
-          {/* Image URL */}
           <div>
             <label className="block mb-1 text-travel-muted">Image URL</label>
             <input
@@ -176,7 +182,6 @@ const AddSpot = () => {
             ></textarea>
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
             className="md:col-span-2 w-full mt-2 bg-travel-accent text-travel-text py-2 rounded-lg font-semibold hover:scale-105 active:scale-100 transition-transform duration-200 cursor-pointer"

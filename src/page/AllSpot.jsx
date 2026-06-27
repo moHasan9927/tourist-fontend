@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
+import { FaLocationDot } from "react-icons/fa6";
+import { MdOutlineAttachMoney } from "react-icons/md";
+import { FaCloud } from "react-icons/fa";
 const AllSpot = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [spots, setSpots] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/tourist-spots")
+    fetch(`${API_URL}/tourist-spots`)
       .then(res => res.json())
       .then(data => setSpots(data));
-  }, []);
+  }, [API_URL]);
 
   return (
     <div className="min-h-screen px-4 py-10">
@@ -35,16 +38,21 @@ const AllSpot = () => {
                 {spot.tourists_spot_name}
               </h3>
 
-              <p className="text-travel-muted text-sm">
-                📍 {spot.location}, {spot.country_Name}
+              <p className="text-travel-muted text-sm flex items-center gap-2">
+                <FaLocationDot />{" "}
+                <p>
+                  {spot.location}, {spot.country_Name}
+                </p>
               </p>
 
-              <p className="text-travel-muted text-sm">
-                💰 Average Cost: ${spot.average_cost}
+              <p className="text-travel-muted text-sm flex items-center gap-2">
+                <MdOutlineAttachMoney />
+                <p> Average Cost: ${spot.average_cost}</p>
               </p>
 
-              <p className="text-travel-muted text-sm">
-                🌤 Best Season: {spot.seasonality}
+              <p className="text-travel-muted text-sm flex items-center gap-2">
+                <FaCloud />
+                <p>Best Season: {spot.seasonality}</p>
               </p>
 
               {/* Button */}

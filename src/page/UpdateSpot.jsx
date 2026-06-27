@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const UpdateSpot = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -10,10 +12,10 @@ const UpdateSpot = () => {
   useEffect(() => {
     if (!id) return;
 
-    fetch(`http://localhost:5000/tourist-spots/${id}`)
+    fetch(`${API_URL}/tourist-spots/${id}`)
       .then(res => res.json())
       .then(data => setSpot(data));
-  }, [id]);
+  }, [id, API_URL]);
 
   const handleUpdate = e => {
     e.preventDefault();
@@ -32,7 +34,7 @@ const UpdateSpot = () => {
       totalVisitorsPerYear: parseInt(form.visitors.value),
     };
 
-    fetch(`http://localhost:5000/tourist-spots/${id}`, {
+    fetch(`${API_URL}/tourist-spots/${id}`, {
       method: "PUT",
       headers: {
         "content-type": "application/json",
@@ -42,8 +44,14 @@ const UpdateSpot = () => {
       .then(res => res.json())
       .then(data => {
         if (data.modifiedCount > -1) {
-          alert("Tourist spot updated successfully");
-          navigate(-1); // go back to previous page
+          Swal.fire({
+            title: "Updated!",
+            text: "Tourist Spot Updated Successfully!",
+            icon: "success",
+            confirmButtonText: "OK",
+          }).then(() => {
+            navigate(-1);
+          });
         }
       });
   };

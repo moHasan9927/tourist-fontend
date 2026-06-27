@@ -1,7 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import AuthContext from "../context/AuthContext";
+import Swal from "sweetalert2";
+import { FaLocationDot } from "react-icons/fa6";
+import { MdOutlineAttachMoney } from "react-icons/md";
+import { FaClock, FaCloud } from "react-icons/fa";
+import { IoPeopleSharp } from "react-icons/io5";
 import { Link } from "react-router-dom";
 const MyList = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user } = useContext(AuthContext);
   const [spots, setSpots] = useState([]);
 
@@ -14,16 +20,35 @@ const MyList = () => {
   }, [user]);
 
   const handleDelete = id => {
-    fetch(`http://localhost:5000/tourist-spots/${id}`, {
-      method: "DELETE",
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.deletedCount > 0) {
-          const remaining = spots.filter(spot => spot._id !== id);
-          setSpots(remaining);
-        }
-      });
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to recover this tourist spot!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then(result => {
+      if (result.isConfirmed) {
+        fetch(`${import.meta.env.VITE_API_URL}/tourist-spots/${id}`, {
+          method: "DELETE",
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.deletedCount > 0) {
+              const remaining = spots.filter(spot => spot._id !== id);
+              setSpots(remaining);
+
+              Swal.fire({
+                title: "Deleted!",
+                text: "Tourist spot deleted successfully.",
+                icon: "success",
+                confirmButtonText: "OK",
+              });
+            }
+          });
+      }
+    });
   };
 
   return (
@@ -49,31 +74,38 @@ const MyList = () => {
                 {spot.tourists_spot_name}
               </h3>
 
-              <p className="text-travel-muted text-sm">📍 {spot.location}</p>
-
-              <p className="text-travel-muted text-sm">
-                🌍 {spot.country_Name}
+              <p className="text-travel-muted text-sm flex gap-2 items-center">
+                <FaLocationDot />{" "}
+                <p>
+                  {spot.location}, {spot.country_Name}
+                </p>
               </p>
 
-              <p className="text-travel-muted text-sm">
-                💰 ${spot.average_cost}
+              <p className="text-travel-muted text-sm flex gap-2 items-center">
+                <MdOutlineAttachMoney />
+                <p> Average Cost: ${spot.average_cost}</p>
               </p>
 
-              <p className="text-travel-muted text-sm">
-                👥 {spot.totalVisitorsPerYear} visitors/year
+              <p className="text-travel-muted text-sm flex gap-2 items-center">
+                <FaCloud />
+                <p>Best Season: {spot.seasonality}</p>
+              </p>
+              <p className="text-travel-muted text-sm flex gap-2 items-center">
+                <FaClock />
+                <p>Travel Time: {spot.travel_time}</p>
               </p>
 
               <div className="flex gap-3 mt-4">
                 <Link
                   to={`/spot-details/${spot._id}`}
-                  className="flex-1 text-center bg-travel-accent text-travel-text py-2 rounded-lg font-semibold hover:scale-105 active:scale-100 transition-transform"
+                  className="flex-1 text-center bg-travel-accent text-travel-text py-2 rounded-lg font-semibold hover:scale-105 active:scale-100 transition-transform duration-300"
                 >
                   View Details
                 </Link>
 
                 <button
                   onClick={() => handleDelete(spot._id)}
-                  className="flex-1 bg-red-500 text-white py-2 rounded-lg font-semibold hover:scale-105 active:scale-100 transition-transform"
+                  className="flex-1 bg-red-500 text-white py-2 rounded-lg font-semibold hover:scale-105 active:scale-100 duration-300 transition-transform cursor-pointer"
                 >
                   Delete
                 </button>
