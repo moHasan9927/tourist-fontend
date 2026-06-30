@@ -17,7 +17,7 @@ const MyList = () => {
     fetch(`${API_URL}/my-spots/${user.email}`)
       .then(res => res.json())
       .then(data => setSpots(data));
-  }, [API_URL, user.email]);
+  }, [API_URL, user]);
 
   const handleDelete = id => {
     Swal.fire({
