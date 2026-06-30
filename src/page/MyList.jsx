@@ -14,10 +14,10 @@ const MyList = () => {
   useEffect(() => {
     if (!user?.email) return;
 
-    fetch(`http://localhost:5000/my-spots/${user.email}`)
+    fetch(`${API_URL}/my-spots/${user.email}`)
       .then(res => res.json())
       .then(data => setSpots(data));
-  }, [user]);
+  }, [API_URL, user.email]);
 
   const handleDelete = id => {
     Swal.fire({
